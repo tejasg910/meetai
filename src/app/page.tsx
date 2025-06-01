@@ -5,6 +5,11 @@ import { authClient } from "@/lib/auth-client";
 import Image from "next/image";
 import { useState } from "react";
 
+/**
+ * Renders the authentication page, allowing users to sign up, sign in, and sign out.
+ *
+ * Displays a welcome message and sign-out option if a user session exists. Otherwise, presents forms for user registration and login, handling authentication actions and feedback.
+ */
 export default function Home() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
