@@ -1,9 +1,17 @@
 import { Card } from '@/components/ui/card'
-import { Signin } from '@/modules/auth/view/sign-in'
+import { auth } from '@/lib/auth';
+import { Signin } from '@/modules/auth/ui/view/sign-in-view'
+import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 import React from 'react'
 
-const Page = () => {
-  console.log("sing in page")
+const Page = async () => {
+
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  if (!!session) {
+    redirect('/');
+  }
   return (
 
     <div>
@@ -11,7 +19,7 @@ const Page = () => {
 
 
 
-    <Signin />
+      <Signin />
 
     </div>
 

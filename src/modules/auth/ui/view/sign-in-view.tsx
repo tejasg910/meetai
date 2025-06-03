@@ -18,41 +18,27 @@ import { OctagonAlertIcon } from 'lucide-react'
 
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
+import { FaGithub, FaGoogle } from 'react-icons/fa'
 const formSchema = z.object({
-    name: z.string().min(1).max(50),
     email: z.string().email(),
     password: z.string().min(8, { message: "Password must be 8 characters long" }),
-    confirmPassword: z.string().min(8, { message: "Password must be 8 characters long" }),
+})
 
-}).refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"], // path of error
-});
-
-export const SignUpView = () => {
-
+export const Signin = () => {
     const router = useRouter()
     const [error, setError] = React.useState<string | null>(null)
     const [pending, setPending] = React.useState<boolean>(false)
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema), defaultValues: {
-
-            name: "",
-            email: "", password: "", confirmPassword: ""
-        }
-    })
+    const form = useForm<z.infer<typeof formSchema>>({ resolver: zodResolver(formSchema), defaultValues: { email: "", password: "" } })
 
 
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
         setError(null);
 
 
-        await authClient.signUp.email({
-            name: data.name,
+        await authClient.signIn.email({
             email: data.email,
-            password: data.password
-
-
+            password: data.password,
+            callbackURL: "/"
         }, {
             onRequest: () => {
                 setPending(true)
@@ -60,6 +46,29 @@ export const SignUpView = () => {
             onSuccess: (data) => {
                 router.push("/")
             },
+            onError: ({ error }) => {
+                console.log(error)
+                setError(error.message)
+            },
+            onResponse: () => {
+                setPending(false)
+            }
+
+
+        })
+
+    }
+
+
+    const onSocial = async (provider: "google" | "github") => {
+        setError(null);
+
+
+        await authClient.signIn.social({ provider, callbackURL: "/" }, {
+            onRequest: () => {
+                setPending(true)
+            },
+
             onError: ({ error }) => {
                 console.log(error)
                 setError(error.message)
@@ -82,31 +91,15 @@ export const SignUpView = () => {
 
                         <div className='flex flex-col gap-6 '>
                             <div className='flex flex-col items-center text-center'>
-                                <h1 className='text-2xl font-bold'>Let&apos;s get started</h1>
+                                <h1 className='text-2xl font-bold'>Welcome back</h1>
                                 <p className='text-muted-foreground text-balance'>
-                                    Create your account
+                                    Login to your account
 
                                 </p>
 
                             </div>
 
-                            <div className='grid gap-3 '>
-                                <FormField control={form.control} name='name' render={({ field }) => (
-                                    <FormItem>
 
-                                        <FormLabel>Name</FormLabel>
-
-                                        <FormControl>
-                                            <Input {...field} type='text' placeholder='John Wick' />
-
-                                        </FormControl>
-                                        <FormMessage />
-
-
-                                    </FormItem>
-                                )} />
-
-                            </div>
                             <div className='grid gap-3 '>
                                 <FormField control={form.control} name='email' render={({ field }) => (
                                     <FormItem>
@@ -142,23 +135,7 @@ export const SignUpView = () => {
                                 )} />
 
                             </div>
-                            <div className='grid gap-3 '>
-                                <FormField control={form.control} name='confirmPassword' render={({ field }) => (
-                                    <FormItem>
 
-                                        <FormLabel>Confirm Password</FormLabel>
-
-                                        <FormControl>
-                                            <Input {...field} type='password' placeholder='********' />
-
-                                        </FormControl>
-                                        <FormMessage />
-
-
-                                    </FormItem>
-                                )} />
-
-                            </div>
                             {!!error && <Alert className='bg-destructive/10 border-none '><OctagonAlertIcon className='h-4 w-4 !text-destructive' />{error} </Alert>}
 
                             <Button disabled={pending} type='submit' className='w-full '>Sign in</Button>
@@ -166,19 +143,23 @@ export const SignUpView = () => {
                                 <span className='bg-card text-muted-foreground relative z-10 px-2'>Or continue with</span>
                             </div>
                             <div className='grid grid-cols-2 gap-4'>
-                                <Button disabled={pending} variant="outline" type="button" className='w-full'>
+                                <Button onClick={() => {
+                                    onSocial("google")
+                                }} disabled={pending} variant="outline" type="button" className='w-full'>
 
-                                    Google
+                                    <FaGoogle />
                                 </Button>
-                                <Button disabled={pending} variant="outline" type="button" className='w-full'>
+                                <Button onClick={() => {
+                                    onSocial("github")
+                                }} disabled={pending} variant="outline" type="button" className='w-full'>
 
-                                    Github
+                                     <FaGithub />
                                 </Button>
                             </div>
 
                             <div className='text-center text-sm'>
-                                Already have an account? {" "}
-                                <Link href="/sign-in" className='underline underline-offset-4'>Sign in</Link>
+                                Don&apos;ts have an account? {" "}
+                                <Link href="/sign-up" className='underline underline-offset-4'>Sign up</Link>
                             </div>
                         </div>
                     </form>
