@@ -7,12 +7,10 @@ import { useRouter } from 'next/navigation'
 import React from 'react'
 
 const HomeView = () => {
-    const trpc = useTRPC();
-    const { data, isLoading } = useQuery(trpc.hello.queryOptions({ text: "tejas" }))
+    const trpc = useTRPC()
     return (
         <div>
-            {isLoading && <p>Loading...</p>}
-            {data && <p>{data.greeting}</p>}
+          Home view 
         </div>
     )
 }
