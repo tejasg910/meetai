@@ -3,6 +3,7 @@
 
 import { ErrorState } from "@/components/error"
 import { LoadingState } from "@/components/loading"
+import { ResponsiveDialog } from "@/components/responsive-dialog"
 import { useTRPC } from "@/trpc/client"
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
 
@@ -14,6 +15,7 @@ export const AgentView = () => {
     return (
         <div>
             <h1>Agents</h1>
+
             <ul>
                 {JSON.stringify(data, null, 2)}
             </ul>
