@@ -48,9 +48,7 @@ export function ResponsiveDialog({
 
                         {children}
                     </div>
-                    <DrawerFooter>
-                        <DrawerClose>Close</DrawerClose>
-                    </DrawerFooter>
+            
                 </DrawerContent>
             </Drawer>
         );
@@ -64,9 +62,7 @@ export function ResponsiveDialog({
                     <DialogDescription>{description}</DialogDescription>
                 </DialogHeader>
                 {children}
-                <DialogFooter>
-                    <DialogClose>Close</DialogClose>
-                </DialogFooter>
+               
             </DialogContent>
         </Dialog>
     );
