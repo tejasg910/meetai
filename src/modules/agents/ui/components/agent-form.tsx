@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
     Form,
     FormControl,
-    
+
     FormField,
     FormItem,
     FormLabel,
@@ -35,16 +35,14 @@ export const AgentForm = ({ onSucces, onCancel, initialValues }: AgentFormProps)
     const queryClient = useQueryClient()
 
     const createAgent = useMutation(trpc.agents.create.mutationOptions({
-        onSuccess: async() => {
-         await    queryClient.invalidateQueries(trpc.agents.getMany.queryOptions({}));
+        onSuccess: async () => {
+            await queryClient.invalidateQueries(trpc.agents.getMany.queryOptions({}));
 
 
-            if(initialValues?.id){
-              await   queryClient.invalidateQueries(trpc.agents.getOne.queryOptions({ id: initialValues.id }))
-            }
+            //   TODO invalidte free tier usage
 
             onSucces?.();
-            
+
         },
         onError: (error) => {
             toast.error(error.message)
@@ -53,7 +51,24 @@ export const AgentForm = ({ onSucces, onCancel, initialValues }: AgentFormProps)
         }
     }))
 
+    const updateAgent = useMutation(trpc.agents.update.mutationOptions({
+        onSuccess: async () => {
+            await queryClient.invalidateQueries(trpc.agents.getMany.queryOptions({}));
 
+
+            if (initialValues?.id) {
+                await queryClient.invalidateQueries(trpc.agents.getOne.queryOptions({ id: initialValues.id }))
+            }
+
+            onSucces?.();
+
+        },
+        onError: (error) => {
+            toast.error(error.message)
+            //TODO check if error code is forbidden redirect to /upgrade 
+
+        }
+    }))
 
     const form = useForm<z.infer<typeof agentInsertSchema>>({
         resolver: zodResolver(agentInsertSchema),
@@ -66,12 +81,13 @@ export const AgentForm = ({ onSucces, onCancel, initialValues }: AgentFormProps)
 
 
     const isEdit = !!initialValues?.id;
-    const pending = createAgent.isPending;
+    const pending = createAgent.isPending || updateAgent.isPending
 
 
     const onSubmit = (values: z.infer<typeof agentInsertSchema>) => {
         if (isEdit) {
             console.log("update agent")
+            updateAgent.mutate({ ...values, id: initialValues.id })
         }
         else {
 
