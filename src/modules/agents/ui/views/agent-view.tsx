@@ -6,12 +6,12 @@ import { LoadingState } from "@/components/loading"
 import { ResponsiveDialog } from "@/components/responsive-dialog"
 import { useTRPC } from "@/trpc/client"
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
-import { DataTable } from "../components/data-table"
 import { columns } from "../components/column"
 import { EmptyState } from "@/components/empty"
 import { useAgentsFilters } from "../../hooks/use-agents-filters"
 import { DataPagination } from "../components/data-pagination"
 import { useRouter } from "next/navigation"
+import { DataTable } from "@/components/data-table"
 
 export const AgentView = () => {
     const router = useRouter()
