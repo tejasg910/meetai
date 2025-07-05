@@ -156,9 +156,7 @@ export const MeetingForm = ({ onSucces, onCancel, initialValues }: MeetingFormPr
                                         }))}
 
                                         onSelect={field.onChange}
-                                        onSearch={setAgentSearch
-
-                                        }
+                                        onSearch={setAgentSearch}
                                         value={field.value}
                                         placeholder="Select an agent"
                                     />
