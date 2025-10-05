@@ -44,6 +44,8 @@ const AgentIdView = ({ agentId }: Props) => {
 
     const handleRemoveAgentMethod = async () => {
         const ok = await confirmRemoveMethod();
+
+       
         if (!ok) {
             return;
         }
