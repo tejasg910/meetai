@@ -23,6 +23,7 @@ import { MeetingGetOne } from "../../types";
 import { meetingInsertSchema } from "../../schema";
 import { useState } from "react";
 import { NewAgentDialog } from "@/modules/agents/ui/components/new-agent-dialog";
+import { useRouter } from "next/navigation";
 
 interface MeetingFormProps {
     onSucces?: (id?: string) => void;
@@ -36,7 +37,7 @@ export const MeetingForm = ({ onSucces, onCancel, initialValues }: MeetingFormPr
 
     const trpc = useTRPC();
     const queryClient = useQueryClient()
-
+const router = useRouter()
     const [agentSearch, setAgentSearch] = useState("");
     const [openAgentForm, setOpenAgentForm] = useState(false);
     const agents = useQuery(trpc.agents.getMany.queryOptions({
@@ -48,15 +49,18 @@ export const MeetingForm = ({ onSucces, onCancel, initialValues }: MeetingFormPr
         onSuccess: async (data) => {
             await queryClient.invalidateQueries(trpc.meetings.getMany.queryOptions({}));
 
+            await queryClient.invalidateQueries(trpc.premium.getFreeUsage.queryOptions());
 
-            //   TODO invalidte free tier usage
 
             onSucces?.(data.id);
 
         },
         onError: (error) => {
             toast.error(error.message)
-            //TODO check if error code is forbidden redirect to /upgrade 
+
+        if(error.data?.code==="FORBIDDEN"){
+            router.push("/upgrade")
+        }
 
         }
     }))
